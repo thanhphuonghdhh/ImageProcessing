@@ -23,3 +23,21 @@ export const imageResizing = async (
   const res = await sharp(inputPath).resize(width, height).toFile(outputPath);
   console.log(res);
 };
+
+export const validate = (
+  filename: string | undefined,
+  width: string | undefined,
+  height: string | undefined,
+) => {
+  if (filename === undefined || height === undefined || width === undefined) {
+    throw new Error("Please fill file name, height and width!!");
+  }
+
+  if (isNaN(Number(height)) || isNaN(Number(width))) {
+    throw new Error("Height and width must be a number!!");
+  }
+
+  if (+height <= 0 || +width <= 0) {
+    throw new Error("Height and width must be greater than 0!!");
+  }
+};

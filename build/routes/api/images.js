@@ -21,12 +21,14 @@ imageRoutes.get("/images", (req, res) => __awaiter(void 0, void 0, void 0, funct
     const width = req.query.width;
     const height = req.query.height;
     const fileNamePath = inputPath + fileName + ".jpg";
-    if (fileName === undefined || height === undefined || width === undefined) {
-        res.status(400).send("Please fill file name, height and width!!");
-        return;
+    try {
+        (0, functionHelpers_1.validate)(fileName, width, height);
     }
-    if (isNaN(Number(height)) || isNaN(Number(width))) {
-        res.status(400).send(`Height and width must be a number!!`);
+    catch (e) {
+        if (e instanceof Error)
+            res.status(400).send(e.message);
+        else
+            res.status(400).send("Unknown error");
         return;
     }
     try {

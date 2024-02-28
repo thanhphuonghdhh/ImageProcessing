@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.imageResizing = exports.isFileExistinFolder = void 0;
+exports.validate = exports.imageResizing = exports.isFileExistinFolder = void 0;
 const fs_1 = require("fs");
 const sharp_1 = __importDefault(require("sharp"));
 const isFileExistinFolder = (file, folderPath) => {
@@ -30,3 +30,15 @@ const imageResizing = (inputPath, outputPath, width, height) => __awaiter(void 0
     console.log(res);
 });
 exports.imageResizing = imageResizing;
+const validate = (filename, width, height) => {
+    if (filename === undefined || height === undefined || width === undefined) {
+        throw new Error("Please fill file name, height and width!!");
+    }
+    if (isNaN(Number(height)) || isNaN(Number(width))) {
+        throw new Error("Height and width must be a number!!");
+    }
+    if (+height <= 0 || +width <= 0) {
+        throw new Error("Height and width must be greater than 0!!");
+    }
+};
+exports.validate = validate;

@@ -3,6 +3,7 @@ import { accessSync } from "fs";
 import {
   imageResizing,
   isFileExistinFolder,
+  validate,
 } from "../../utilities/functionHelpers";
 import { resolve } from "path";
 
@@ -13,18 +14,16 @@ const imageRoutes = Router();
 imageRoutes.get(
   "/images",
   async (req: Request, res: Response): Promise<void> => {
-    const fileName = req.query.filename;
-    const width = req.query.width;
-    const height = req.query.height;
+    const fileName = req.query.filename as string | undefined;
+    const width = req.query.width as string | undefined;
+    const height = req.query.height as string | undefined;
     const fileNamePath = inputPath + fileName + ".jpg";
 
-    if (fileName === undefined || height === undefined || width === undefined) {
-      res.status(400).send("Please fill file name, height and width!!");
-      return;
-    }
-
-    if (isNaN(Number(height)) || isNaN(Number(width))) {
-      res.status(400).send(`Height and width must be a number!!`);
+    try {
+      validate(fileName, width, height);
+    } catch (e) {
+      if (e instanceof Error) res.status(400).send(e.message);
+      else res.status(400).send("Unknown error");
       return;
     }
 
@@ -43,7 +42,7 @@ imageRoutes.get(
     const thumbPath = outputPath + thumbName;
 
     if (!isFileExistinFolder(thumbName, outputPath)) {
-      await imageResizing(fileNamePath, thumbPath, +width, +height);
+      await imageResizing(fileNamePath, thumbPath, +width!, +height!);
     }
     res.status(200).sendFile(resolve(thumbPath));
   },
